@@ -1,0 +1,9 @@
+[Unit]
+Description=Wi-Fi Telemetry Daemon (WPA Station)
+Requires=sys-subsystem-net-devices-%i.device
+After=sys-subsystem-net-devices-%i.device
+
+[Service]
+Type=simple
+Restart=on-failure
+ExecStart=${CMAKE_INSTALL_FULL_SBINDIR}/wifi-telemetryd -s wpa -o station -i %i
