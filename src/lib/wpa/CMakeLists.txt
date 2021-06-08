@@ -1,0 +1,39 @@
+
+target_sources(wifi-telemetry
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/wifi_telemetry_input_station_connection_attempt.cxx
+        ${CMAKE_CURRENT_SOURCE_DIR}/wpa_command.cxx
+        ${CMAKE_CURRENT_SOURCE_DIR}/wpa_command_bss.cxx
+        ${CMAKE_CURRENT_SOURCE_DIR}/wpa_command_key_value_pair.cxx
+        ${CMAKE_CURRENT_SOURCE_DIR}/wpa_command_response.cxx
+        ${CMAKE_CURRENT_SOURCE_DIR}/wpa_command_response_parser.cxx
+        ${CMAKE_CURRENT_SOURCE_DIR}/wpa_command_signal_poll.cxx
+        ${CMAKE_CURRENT_SOURCE_DIR}/wpa_command_status.cxx
+        ${CMAKE_CURRENT_SOURCE_DIR}/wpa_controller.cxx
+        ${CMAKE_CURRENT_SOURCE_DIR}/wpa_event.cxx
+        ${CMAKE_CURRENT_SOURCE_DIR}/wpa_event_association_rejected.cxx
+        ${CMAKE_CURRENT_SOURCE_DIR}/wpa_event_authentication_rejected.cxx
+        ${CMAKE_CURRENT_SOURCE_DIR}/wpa_event_connected.cxx
+        ${CMAKE_CURRENT_SOURCE_DIR}/wpa_event_disconnected.cxx
+        ${CMAKE_CURRENT_SOURCE_DIR}/wpa_event_dpp_auth_init_failure.cxx
+        ${CMAKE_CURRENT_SOURCE_DIR}/wpa_event_dpp_auth_success.cxx
+        ${CMAKE_CURRENT_SOURCE_DIR}/wpa_event_dpp_chirp_received.cxx
+        ${CMAKE_CURRENT_SOURCE_DIR}/wpa_event_dpp_conf_received.cxx
+        ${CMAKE_CURRENT_SOURCE_DIR}/wpa_event_dpp_conf_sent.cxx
+        ${CMAKE_CURRENT_SOURCE_DIR}/wpa_event_dpp_failure.cxx
+        ${CMAKE_CURRENT_SOURCE_DIR}/wpa_event_dpp_frame_transmit_status.cxx
+        ${CMAKE_CURRENT_SOURCE_DIR}/wpa_event_handler.cxx
+        ${CMAKE_CURRENT_SOURCE_DIR}/wpa_event_network_not_found.cxx
+        ${CMAKE_CURRENT_SOURCE_DIR}/wpa_event_parser.cxx
+        ${CMAKE_CURRENT_SOURCE_DIR}/wpa_state.cxx
+)
+
+target_include_directories(wifi-telemetry
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+target_link_libraries(wifi-telemetry
+    PRIVATE
+        Threads::Threads
+)

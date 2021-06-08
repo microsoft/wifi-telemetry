@@ -1,0 +1,7 @@
+[Unit]
+Description=Wi-Fi Telemetry Daemon (Zero Touch Provisioning)
+
+[Service]
+Type=simple
+Restart=on-failure
+ExecStart=${CMAKE_INSTALL_FULL_SBINDIR}/wifi-telemetryd -s ztp
