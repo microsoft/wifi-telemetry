@@ -1,25 +1,16 @@
 # Wi-Fi Telemetry
 
-This project provides a Wi-Fi telemetry library and daemon. It enables realtime
-collection and reporting of Wi-Fi related events. It can be used in conjunction
+This project provides a wi-fi telemetry library and daemon. It enables realtime
+collection and reporting of wi-fi related events. It can be used in conjunction
 with the the [wifi-ztp](https://github.com/microsoft/wifi-ztp) project to
-analyze and collect Wi-Fi zero touch provisioning telemetry as well (-s ztp
-command line option).
+analyze and collect wi-fi zero touch provisioning telemetry as well.
 
 ## Building
 
 ### Ubuntu (focal)
 
 ```bash
-sudo apt install    \
- build-essential    \   
- cmake              \
- git                \
- liblttng-ust-dev   \
- libpci-dev         \
- libssl-dev         \
- libsystemd-dev     \
- pkg-config
+sudo apt install build-essential cmake git liblttng-ust-dev libpci-dev libssl-dev libsystemd-dev pkg-config
 ```
 
 Checkout and build:
@@ -31,6 +22,45 @@ mkdir build && cd $_
 cmake ..
 make -j $(nproc)
 ```
+
+## Usage
+
+The central concept is that of a telemetry monitor, represented as
+[`WifiTelemetryMonitor`](include/wifi-telemetry/wifi_telemetry_monitor.hpp).
+A monitor passively tracks one or more wi-fi telemetry sources, represented as
+[`WifiTelemetrySource`](include/wifi-telemetry/wifi_telemetry_source.hpp),
+each of which is optionally bound to a device interface (eg. `wlan0`) and wi-fi operational mode, either `station` or `access-point`. Event information is aggregated and translated to lttng events.
+
+The daemon accepts a series of flag tuples for each telemetry source:
+
+| Flag | Presence     | Description                  | Possible Values                        | Examples                 |
+|------|--------------|------------------------------|----------------------------------------|--------------------------|
+| `-s` | **Required** | telemetry source identifier  | `wpa`, `ztp`                           | `-s wpa`                 |
+| `-i` | Optional     | wi-fi device interface name  | Any valid wif-device name              | `-i wlan0`, `-i  wl01s9` |
+| `-o` | Optional     | wi-fi operational mode       | `sta`, `station`, `ap`, `access-point` | `-o station`, `-o ap`    |
+
+### Telemetry Sources
+
+#### Wi-Fi Protected Access (WPA) Supplicant (`wpa`)
+
+This source passively monitors basic wi-fi connectivity and Device Provisioning Protocol (DPP aka [Wi-Fi EasyConnect](https://www.wi-fi.org/discover-wi-fi/wi-fi-easy-connect)) events originating from a wpa_supplicant control socket.
+
+#### Zero Touch Provisioning Daemon (`ztp`)
+
+This source passively monitors zero touch provisioning daemon (ztpd) events
+originating from the ztpd d-bus inteface. Some events are not bound to a
+specific interface.
+
+### lttng Providers and Tracepoints
+
+  | Provider       | Tracepoint                  | Source | Description                                          |
+  |----------------|-----------------------------|--------|------------------------------------------------------|
+  | `wifi`         | `device_info`               | `wpa`  | Interface, model, driver, subsystem and vendor info. |
+  | `wifi-station` | `connection-attempt`        | `wpa`  | Result, bssid, signal, frequency, security, status.  |
+  | `wifi-station` | `connection-drop`           | `wpa`  | Reason, bssid, locally generated.                    |
+  | `wifi-dpp`     | `dpp_exchange_enrollee`     | `wpa`  | State, role, duration, failure details, frequencies. |
+  | `wifi-dpp`     | `dpp_exchange_configurator` | `wpa`  | State, role, duration, failure details, frequency.   |
+  | `wifi-dpp`     | `dpp_device_roles_changed`  | `ztp`  | Device role(s) changed.                              |
 
 ## Contributing
 
