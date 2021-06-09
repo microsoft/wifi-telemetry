@@ -29,11 +29,11 @@ The central concept is that of a telemetry monitor, represented as
 [`WifiTelemetryMonitor`](include/wifi-telemetry/wifi_telemetry_monitor.hpp).
 A monitor passively tracks one or more wi-fi telemetry sources, represented as
 [`WifiTelemetrySource`](include/wifi-telemetry/wifi_telemetry_source.hpp),
-each of which is optionally bound to a device interface (eg. `wlan0`) and wi-fi operational mode, either `station` or `access-point`. Event information is aggregated and translated to lttng events.
+each of which is optionally bound to a device interface (eg. `wlan0`) and wi-fi operational mode, either `station` or `access-point`. Event information is aggregated and translated to [lttng](https://lttng.org/) events.
 
 The daemon accepts a series of flag tuples for each telemetry source:
 
-| Flag | Presence     | Description                  | Possible Values                        | Examples                 |
+| Flag | Presence     | Description                  | Supported Values                       | Examples                 |
 |------|--------------|------------------------------|----------------------------------------|--------------------------|
 | `-s` | **Required** | telemetry source identifier  | `wpa`, `ztp`                           | `-s wpa`                 |
 | `-i` | Optional     | wi-fi device interface name  | Any valid wif-device name              | `-i wlan0`, `-i  wl01s9` |
@@ -62,6 +62,36 @@ specific interface.
   | `wifi-dpp`     | `dpp_exchange_configurator` | `wpa`  | State, role, duration, failure details, frequency.   |
   | `wifi-dpp`     | `dpp_device_roles_changed`  | `ztp`  | Device role(s) changed.                              |
 
+### Examples
+
+#### Monitor basic wi-fi client connectivity on `wlan0`
+
+```bash
+wifi-telemetryd -s wpa -i wlan0 -s sta
+```
+
+#### Monitor basic wifi-client connectivity and ztp events on `wlan1`
+
+```bash
+wifi-telemetryd -s wpa -i wlan1 -s station -s ztp
+```
+
+#### Monitor wi-fi client connectivity with systemd instantiated service unit on arbitrary interface (`%i`)
+
+[wifi-telemetryd-station@service.in](src/daemon/systemd/wifi-telemetryd-station@.service.in):
+
+```ini
+[Unit]
+Description=Wi-Fi Telemetry Daemon (WPA Station)
+Requires=sys-subsystem-net-devices-%i.device
+After=sys-subsystem-net-devices-%i.device
+
+[Service]
+Type=simple
+Restart=on-failure
+ExecStart=${CMAKE_INSTALL_FULL_SBINDIR}/wifi-telemetryd -s wpa -o station -i %i
+```
+
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
@@ -78,7 +108,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 ## Trademarks
 
-This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft 
+This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft
 trademarks or logos is subject to and must follow 
 [Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general).
 Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship.
