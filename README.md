@@ -29,7 +29,7 @@ The central concept is that of a telemetry monitor, represented as
 [`WifiTelemetryMonitor`](include/wifi-telemetry/wifi_telemetry_monitor.hpp).
 A monitor passively tracks one or more wi-fi telemetry sources, represented as
 [`WifiTelemetrySource`](include/wifi-telemetry/wifi_telemetry_source.hpp),
-each of which is optionally bound to a device interface (eg. `wlan0`) and wi-fi operational mode, either `station` or `access-point`. Event information is aggregated and translated to [lttng](https://lttng.org/) events.
+each of which is optionally bound to a device interface (eg. `wlan0`) and wi-fi operational mode, either `station` or `access-point`. Event information is aggregated and translated to [lttng](https://lttng.org/) events. All telemetry is local and ***never leaves the device***.
 
 The daemon accepts a series of flag tuples for each telemetry source:
 
@@ -66,14 +66,19 @@ specific interface.
 
 #### Monitor basic wi-fi client connectivity on `wlan0`
 
-```bash
-wifi-telemetryd -s wpa -i wlan0 -s sta
+```shell
+$ wifi-telemetryd -s wpa -i wlan0 -s sta
+activated telemetry source 'wpa'
+telemetry monitor started with 1 of 1 telemetry sources
 ```
 
 #### Monitor basic wifi-client connectivity and ztp events on `wlan1`
 
-```bash
-wifi-telemetryd -s wpa -i wlan1 -s station -s ztp
+```shell
+$ wifi-telemetryd -s wpa -i wlan1 -s station -s ztp
+activated telemetry source 'wpa'
+activated telemetry source 'ztpd'
+telemetry monitor started with 2 of 2 telemetry sources
 ```
 
 #### Monitor wi-fi client connectivity with systemd instantiated service unit on arbitrary interface (`%i`)
@@ -89,7 +94,23 @@ After=sys-subsystem-net-devices-%i.device
 [Service]
 Type=simple
 Restart=on-failure
-ExecStart=${CMAKE_INSTALL_FULL_SBINDIR}/wifi-telemetryd -s wpa -o station -i %i
+ExecStart=/usr/sbin/wifi-telemetryd -s wpa -o station -i %i
+```
+
+#### View all wi-fi telemetry in real-time with lttng
+
+```shell
+$ lttng create --live
+Live session auto-20210610-220234 created.
+Traces will be output to tcp4://127.0.0.1:5342/ [data: 5343]
+Live timer interval set to 1000000 us
+$ lttng enable-event -u "wifi:* wifi_station:* wifi_dpp:*"
+UST event wifi:* wifi_station:* wifi_dpp:* created in channel channel0
+$ lttng start
+Tracing started for session auto-20210610-220234
+$ lttng view
+Trace directory: net://localhost/host/apd-d8c0a65935ed/auto-20210610-220234$ lttng create --live
+<wi-fi tracepoint events...>
 ```
 
 ## Contributing
