@@ -20,7 +20,7 @@ function usage() {
   echo "      (default=${RELEASE_BRANCH_SOURCE_DEFAULT})"
   echo "    -r <git repo url>"
   echo "       The git repo url to use."
-  echo "       (default=${GIT_REPO_DEFAULT}"
+  echo "       (default=${GIT_REPO_DEFAULT})"
   echo "    -f"
   echo "      Determines whether or not release tags should be forcibly pushed."
   echo "      Note that this will overwrite any existing tags; use with caution."
@@ -75,7 +75,7 @@ function main() {
     local RELEASE_NAME=${FEATURE}-${RELEASE_VERSION}
     local RELEASE_DIR_SOURCE=${FEATURE}-release-${RELEASE_VERSION}
     local RELEASE_DIR=${RELEASE_NAME}
-    local RELEASE_ARCHIVE=${RELEASE_NAME}
+    local RELEASE_ARCHIVE=${RELEASE_NAME}.tar.xz
 
     TEMPDIR=$(mktemp -d)
     pushd ${TEMPDIR} >& ${REDIRECT}
@@ -85,16 +85,12 @@ function main() {
     echo "tagging as ${RELEASE_VERSION_TAG}"
     git tag ${RELEASE_VERSION_TAG} ${FORCE} >& ${REDIRECT}
     git push origin refs/tags/${RELEASE_VERSION_TAG} ${FORCE} >& ${REDIRECT}
-    popd >& ${REDIRECT}
+    pushd -0 >& ${REDIRECT} && dirs -c >& ${REDIRECT}
 
     echo "preparing release archive"
-    git clone --depth 1 --branch ${RELEASE_VERSION_TAG} ${GIT_REPO} ${RELEASE_DIR} >& ${REDIRECT}
-    pushd ${RELEASE_DIR} >& ${REDIRECT}
-    rm -rf .vscode .git .gitignore >& ${REDIRECT}
-    popd >& ${REDIRECT}
-    popd >& ${REDIRECT}
-    tar cJf ${PWD}/${RELEASE_NAME}.tar.xz -C ${TEMPDIR} ${RELEASE_DIR} >& ${REDIRECT}
-    echo "created release archive ${RELEASE_NAME}.tar.xz -> $(sha256sum ${RELEASE_NAME}.tar.xz | awk '{print $1}')"
+    git config tar.tar.xz.command "xz -c"
+    git archive --format=tar.xz --prefix=${RELEASE_NAME}/ ${RELEASE_VERSION_TAG} > ${RELEASE_ARCHIVE}
+    echo "created release archive ${RELEASE_ARCHIVE} -> $(sha256sum ${RELEASE_ARCHIVE} | awk '{print $1}')"
 }
 
 main "$@"
