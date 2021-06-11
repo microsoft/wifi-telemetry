@@ -67,7 +67,7 @@ specific interface.
 #### Monitor basic Wi-Fi client connectivity on `wlan0`
 
 ```shell
-$ wifi-telemetryd -s wpa -i wlan0 -s sta
+$ wifi-telemetryd -s wpa -i wlan0 -o sta
 activated telemetry source 'wpa'
 telemetry monitor started with 1 of 1 telemetry sources
 ```
@@ -75,7 +75,7 @@ telemetry monitor started with 1 of 1 telemetry sources
 #### Monitor basic wifi-client connectivity and ztp events on `wlan1`
 
 ```shell
-$ wifi-telemetryd -s wpa -i wlan1 -s station -s ztp
+$ wifi-telemetryd -s wpa -i wlan1 -o station -s ztp
 activated telemetry source 'wpa'
 activated telemetry source 'ztpd'
 telemetry monitor started with 2 of 2 telemetry sources
