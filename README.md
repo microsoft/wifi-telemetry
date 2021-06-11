@@ -1,9 +1,9 @@
 # Wi-Fi Telemetry
 
-This project provides a wi-fi telemetry library and daemon. It enables realtime
-collection and reporting of wi-fi related events. It can be used in conjunction
+This project provides a Wi-Fi telemetry library and daemon. It enables realtime
+collection and reporting of Wi-Fi related events. It can be used in conjunction
 with the the [wifi-ztp](https://github.com/microsoft/wifi-ztp) project to
-analyze and collect wi-fi zero touch provisioning telemetry as well.
+analyze and collect Wi-Fi zero touch provisioning telemetry as well.
 
 ## Building
 
@@ -27,23 +27,23 @@ make -j $(nproc)
 
 The central concept is that of a telemetry monitor, represented as
 [`WifiTelemetryMonitor`](include/wifi-telemetry/wifi_telemetry_monitor.hpp).
-A monitor passively tracks one or more wi-fi telemetry sources, represented as
+A monitor passively tracks one or more Wi-Fi telemetry sources, represented as
 [`WifiTelemetrySource`](include/wifi-telemetry/wifi_telemetry_source.hpp),
-each of which is optionally bound to a device interface (eg. `wlan0`) and wi-fi operational mode, either `station` or `access-point`. Event information is aggregated and translated to [lttng](https://lttng.org/) events. All telemetry is local and ***never leaves the device***.
+each of which is optionally bound to a device interface (eg. `wlan0`) and Wi-Fi operational mode, either `station` or `access-point`. Event information is aggregated and translated to [lttng](https://lttng.org/) events. All telemetry is local and ***never leaves the device***.
 
 The daemon accepts a series of flag tuples for each telemetry source:
 
 | Flag | Presence     | Description                  | Supported Values                       | Examples                 |
 |------|--------------|------------------------------|----------------------------------------|--------------------------|
 | `-s` | **Required** | telemetry source identifier  | `wpa`, `ztp`                           | `-s wpa`                 |
-| `-i` | Optional     | wi-fi device interface name  | Any valid wif-device name              | `-i wlan0`, `-i  wl01s9` |
-| `-o` | Optional     | wi-fi operational mode       | `sta`, `station`, `ap`, `access-point` | `-o station`, `-o ap`    |
+| `-i` | Optional     | Wi-Fi device interface name  | Any valid Wi-Fi device name            | `-i wlan0`, `-i  wl01s9` |
+| `-o` | Optional     | Wi-Fi operational mode       | `sta`, `station`, `ap`, `access-point` | `-o station`, `-o ap`    |
 
 ### Telemetry Sources
 
 #### Wi-Fi Protected Access (WPA) Supplicant (`wpa`)
 
-This source passively monitors basic wi-fi connectivity and Device Provisioning Protocol (DPP aka [Wi-Fi EasyConnect](https://www.wi-fi.org/discover-wi-fi/wi-fi-easy-connect)) events originating from a wpa_supplicant control socket.
+This source passively monitors basic Wi-Fi connectivity and Device Provisioning Protocol (DPP aka [Wi-Fi EasyConnect](https://www.wi-fi.org/discover-wi-fi/wi-fi-easy-connect)) events originating from a wpa_supplicant control socket.
 
 #### Zero Touch Provisioning Daemon (`ztp`)
 
@@ -64,7 +64,7 @@ specific interface.
 
 ### Examples
 
-#### Monitor basic wi-fi client connectivity on `wlan0`
+#### Monitor basic Wi-Fi client connectivity on `wlan0`
 
 ```shell
 $ wifi-telemetryd -s wpa -i wlan0 -s sta
@@ -81,7 +81,7 @@ activated telemetry source 'ztpd'
 telemetry monitor started with 2 of 2 telemetry sources
 ```
 
-#### Monitor wi-fi client connectivity with systemd instantiated service unit on arbitrary interface (`%i`)
+#### Monitor Wi-Fi client connectivity with systemd instantiated service unit on arbitrary interface (`%i`)
 
 [wifi-telemetryd-station@service.in](src/daemon/systemd/wifi-telemetryd-station@.service.in):
 
@@ -97,7 +97,7 @@ Restart=on-failure
 ExecStart=/usr/sbin/wifi-telemetryd -s wpa -o station -i %i
 ```
 
-#### View all wi-fi telemetry in real-time with lttng
+#### View all Wi-Fi telemetry in real-time with lttng
 
 ```shell
 $ lttng create --live
@@ -110,7 +110,7 @@ $ lttng start
 Tracing started for session auto-20210610-220234
 $ lttng view
 Trace directory: net://localhost/host/apd-d8c0a65935ed/auto-20210610-220234$ lttng create --live
-<wi-fi tracepoint events...>
+<Wi-Fi tracepoint events...>
 ```
 
 ## Contributing
